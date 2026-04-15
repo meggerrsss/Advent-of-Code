@@ -2,6 +2,7 @@ with open(r'2025\inputs\day3input.txt', 'r') as file:
     input = file.read()
 
 import itertools
+from tqdm import tqdm
 
 example = "987654321111111\n811111111111119\n234234234234278\n818181911112111"
 #joltages
@@ -18,8 +19,8 @@ def enable(n, x):
     #filt = [z for z in startlist if sum([int(y) for y in z]) <= x]
     return startlist
 
-fulloptions = enable(100,12)
-print(fulloptions)
+#fulloptions = enable(100,12)
+#print(fulloptions)
 
 def largest2(num):
     length = len(num)
@@ -36,7 +37,7 @@ def largestn(num, n):
     enablecombos = enable(length, n)
     #print(enablecombos)
     sums = []
-    for combo in enablecombos:
+    for combo in tqdm(enablecombos):
         compress = ''
         for spot,value in enumerate(combo):
             #print(spot, value)
@@ -55,6 +56,42 @@ def bankssum(lst, n):
         sum += largestn(item, n)
     return sum
 
+#print(bankssum(example, 2))
+#print(bankssum(input, 2))
 
-print(bankssum(example, 12))
-print(bankssum(input, 12))
+### version 2, coming back to this in ... april 2026
+
+
+def maxbank(s, n):
+    firstn = s[:len(s) +1 -n]
+
+    highest = 0
+    highest_i = 0
+
+    for i, f in enumerate(firstn):
+        if int(f) > highest:
+            highest = int(f)
+            highest_i = i
+
+    remaining = s[highest_i+1:]
+    return highest, remaining, n-1
+
+
+
+def iterbank(s, n):
+    prog = 0
+    while n > 0:
+        digit, s, n = maxbank(s, n)
+        prog = prog * 10 + digit
+    return prog
+
+def bankssum(lst, n):
+    banks = lst.split('\n')
+    sum = 0
+    for item in banks:
+        sum += iterbank(item, n)
+    return sum
+
+
+
+print(bankssum(input,12))
