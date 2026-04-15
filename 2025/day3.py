@@ -49,15 +49,15 @@ def largestn(num, n):
     sumsnum = [int(n) for n in sums if n != '']
     return max(sumsnum)
 
-def bankssum(lst, n):
+def bankssum2(lst, n):
     banks = lst.split('\n')
     sum = 0
     for item in banks:
         sum += largestn(item, n)
     return sum
 
-#print(bankssum(example, 2))
-#print(bankssum(input, 2))
+#print(bankssum2(example, 2))
+#print(bankssum2(input, 2))
 
 ### version 2, coming back to this in ... april 2026
 
