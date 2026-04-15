@@ -59,17 +59,68 @@ def reassignoperators(string):
     return row
 
 
-print(reassignoperators(exampleops))
-exit()
+#print(reassignoperators(exampleops))
 #
 # okay part 2 needs an entirely different way of thinking
-def processmatrix(string):
-    rows = string.split('\n')
-    rowlength = len(rows[0])
-    values = [int(rows[x][y]) for y in range(len(rows))]
-    print(rows, rowlength, values)
+
+# coming back to part 2 months later
+def processmatrix(input):
+    # converting the full worksheet into individual problems
+    lines = input.split('\n')
+    firstline = reducespace(lines[0])
+    numproblems = len(firstline.split(' '))
+    linelength = max([len(t) for t in lines])
+    if (linelength+1) % numproblems == 0:
+        problemlength = int((linelength+1)/numproblems)
+    else: raise ValueError("this is bad")
+    problemstartpoints = [x for x in range(0,linelength,problemlength)]
+    numlines = len(lines)
+    # everything above is just defining math to make this easier
+
+    problems = ['']*numproblems
+    for problemnumber in range(numproblems):
+        for linenumber, line in enumerate(lines):
+            line = line + ' '
+            #print("prob", problemnumber, "line", linenumber, line)
+            st = problemstartpoints[problemnumber]
+            en = st + problemlength
+            toadd = line[st:en]
+            problems[problemnumber] += toadd
+
+    d = {"all lines" : lines, "first line" : firstline, "number of problems" : numproblems,
+         "longest line length": linelength, "problem length" : problemlength, "problem starts" : problemstartpoints,
+         "number of lines" : numlines}
+    return problems, d
+
+def packcolumns(lines):
+    width = max(len(s) for s in lines)
+    padded = [s.rjust(width) for s in lines]
+
+    result = []
+    for col in range(width):
+        digits = [row[col] for row in padded if row[col] != ' ']
+        result.append(int(''.join(digits)))
+
+    return result
 
 
+def convertproblemtoints(input):
+    p,d = processmatrix(input)
+    problem = p[0]
+    stripped = reducespace(problem)
+    mathtype = stripped[-1]
+    mathspot = problem.find(mathtype)
+    numbers = problem[0:mathspot]
+    problemlength = d['problem length']
+    numlines = d['number of lines']
+    splitted = [numbers[(n*problemlength):(n*problemlength)+(problemlength-1)] for n in range(0,numlines)]
+    # there are a lot of assumptions about problemlength being the same here lol
 
 
-print(processmatrix(example))
+    return problem, mathtype, numbers, problemlength, splitted
+
+
+#print(example)
+#print(processmatrix(example)[0])
+
+print(convertproblemtoints(example))
